@@ -13,6 +13,10 @@
 - [Running the Project](#running-the-project)
 - [Testing](#testing)
 - [Middleware Functionality](#middleware-functionality)
+- [Automation Testing Procedure](#automation-testing-procedure)
+- [FFmpeg-based Media Conversion](#ffmpeg-based-media-conversion)
+- [Streaming Service](#streaming-service)
+- [Cluster-Based Performance Optimization](#cluster-based-performance-optimization)
 - [Diagrams](#diagrams)
 
 ## Introduction
@@ -40,8 +44,12 @@ clinikk-tv-backend
 ├── utils
 │   ├── logger.js
 │   ├── cluster.js
+├── tests
+│   ├── user.test.js
+│   ├── media.test.js
 ├── app.js
 ├── config.js
+├── .env
 ```
 
 ## Middleware Functionality
@@ -57,27 +65,6 @@ The authentication middleware is used to protect routes that require user authen
 
 - **Usage:**
   - Applied to protected routes, such as media upload and streaming, to ensure only authenticated users can access them.
-
-```javascript
-const jwt = require('jsonwebtoken');
-const config = require('../config');
-
-const mediaMiddleware = (req, res, next) => {
-    const token = req.header('Authorization').split(' ')[1];
-    if (!token) {
-        return res.status(401).json({ message: 'Access denied. No token provided.' });
-    }
-    try {
-        const decoded = jwt.verify(token, config.secretOrKey);
-        req.user = decoded;
-        next();
-    } catch (error) {
-        res.status(400).json({ message: 'Invalid token' });
-    }
-};
-
-module.exports = { mediaMiddleware };
-```
 
 ## Flow of Media API
 
@@ -104,32 +91,154 @@ The media API flow includes the following steps:
 - Users can stream media files by ID.
 - The media file is read and streamed in chunks to the client.
 
-## Flow Diagrams
+## Setup and Installation
 
-Below are the flow diagrams representing different aspects of the Media API:
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/your-repository/clinikk-tv-backend.git
+   cd clinikk-tv-backend
+   ```
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+3. Create a `.env` file in the root directory and add the following variables:
+   ```env
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret
+   ```
+   These values will be imported from `config.js`.
 
-### User Registration and Login
-This diagram illustrates the process of user authentication, including registration and login, where users receive a JWT token upon successful authentication.
+4. Start the server:
+   ```sh
+   npm start
+   ```
+   Or with nodemon for live reload:
+   ```sh
+   npm run dev
+   ```
 
-![User Registration and Login](backend/content/authentication.png)
+## API Documentation
 
-### Media Upload
-This diagram details the steps involved in uploading media files, processing them with FFmpeg, and storing their metadata in the database.
+### User Endpoints
 
-![Media Upload](backend/content/media_upload.png)
+#### Register a New User
 
-### Fetching Media
-This diagram represents how media details are retrieved from the database and returned to the client upon request.
+**Endpoint:** `POST /api/users/register`
 
-![Fetching Media](backend/content/getMedia.png)
+**Request Body:**
 
-### Media Streaming
-This diagram shows how media files are served in chunks to users, optimizing performance and ensuring smooth playback.
+```json
+{
+    "name": "Test User",
+    "email": "test@example.com",
+    "password": "123456"
+}
+```
 
-![Media Streaming](backend/content/requestStreaming.png)
+**Headers:**
+
+```json
+{
+    "Content-Type": "application/json"
+}
+```
+
+#### Login a User
+
+**Endpoint:** `POST /api/users/login`
+
+**Request Body:**
+
+```json
+{
+    "email": "test@example.com",
+    "password": "123456"
+}
+```
+
+**Headers:**
+
+```json
+{
+    "Content-Type": "application/json"
+}
+```
+
+**Expected Response:**
+
+```json
+{
+    "token": "your_jwt_token_here"
+}
+```
+
+## FFmpeg-based Media Conversion
+
+The media conversion service uses **FFmpeg** to convert uploaded video files into **HLS (HTTP Live Streaming) format** for adaptive bitrate streaming.
+
+- **Functionality:**
+  - Converts input video files into `.m3u8` HLS format.
+  - Splits the video into segments for optimized streaming.
+  - Ensures compatibility across different devices.
+  
+- **Implementation:**
+  - Uses `fluent-ffmpeg` to process media files.
+  - Stores processed media in a dedicated output directory.
+
+## Streaming Service
+
+The streaming service handles the efficient delivery of media content to users.
+
+- **Functionality:**
+  - Streams media files using chunked transfer encoding.
+  - Supports range-based streaming to allow seeking within videos.
+  - Ensures secure delivery with authentication checks.
+  
+- **Implementation:**
+  - Uses `fs` (File System) module to read and send media chunks.
+  - Implements `pipeline` from Node.js streams for optimized data transfer.
+
+## Cluster-Based Performance Optimization
+
+The application is optimized using **Node.js clustering** to utilize multiple CPU cores for handling requests efficiently.
+
+- **Functionality:**
+  - Distributes incoming requests across multiple worker processes.
+  - Automatically restarts failed workers for resilience.
+  - Enhances scalability and performance for concurrent users.
+  
+- **Implementation:**
+  - Uses `cluster` and `os` modules to spawn worker processes.
+  - Logs worker activity and automatically recovers from failures.
+
+## Automation Testing Procedure
+
+The project includes automated tests for User and Media APIs. These tests ensure that endpoints function correctly and validate the expected behavior.
+
+### Running Tests
+
+To execute the test suite, run the following command:
+```sh
+npm test
+```
+This command runs all test files under the `tests/` directory.
+
+### User API Tests
+- Tests user registration and login functionality.
+- Ensures successful token generation after login.
+- Verifies authentication mechanisms.
+
+### Media API Tests
+- Tests media upload, retrieval, and streaming.
+- Ensures media is correctly stored and processed.
+- Validates token authentication for media access.
+
+The test files are located in the `tests/` directory:
+- `user.test.js` for user-related tests.
+- `media.test.js` for media-related tests.
 
 ## Ownership
 
 This project is created by Deepanshu Chauhan
 deepanshuchauhan483@gmail.com
-
