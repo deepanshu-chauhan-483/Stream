@@ -13,8 +13,6 @@ const getAllMedia = async (req, res) => {
         res.status(400).json({ message: 'Error fetching media', error });
     }
 };
-
-// Upload new media and convert to HLS
 const uploadMedia = async (req, res) => {
     const { title, description, media_type, file_path, uploaded_by } = req.body;
     const outputDir = path.join(__dirname, '../media_output', title);
