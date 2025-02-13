@@ -91,6 +91,31 @@ The media API flow includes the following steps:
 - Users can stream media files by ID.
 - The media file is read and streamed in chunks to the client.
 
+
+## Flow Diagrams
+
+Below are the flow diagrams representing different aspects of the Media API:
+
+### User Registration and Login
+This diagram illustrates the process of user authentication, including registration and login, where users receive a JWT token upon successful authentication.
+
+![User Registration and Login](backend/content/authentication.png)
+
+### Media Upload
+This diagram details the steps involved in uploading media files, processing them with FFmpeg, and storing their metadata in the database.
+
+![Media Upload](backend/content/media_upload.png)
+
+### Fetching Media
+This diagram represents how media details are retrieved from the database and returned to the client upon request.
+
+![Fetching Media](backend/content/getMedia.png)
+
+### Media Streaming
+This diagram shows how media files are served in chunks to users, optimizing performance and ensuring smooth playback.
+
+![Media Streaming](backend/content/requestStreaming.png)
+
 ## Setup and Installation
 
 1. Clone the repository:
@@ -237,6 +262,13 @@ This command runs all test files under the `tests/` directory.
 The test files are located in the `tests/` directory:
 - `user.test.js` for user-related tests.
 - `media.test.js` for media-related tests.
+
+## High-Level Design Diagram
+
+The following **High-Level Design (HLD) Diagram** illustrates the overall architecture of the Clinikk TV backend service:
+
+![High-Level Design Diagram](backend/content/HLD.png)
+
 
 ## Ownership
 
