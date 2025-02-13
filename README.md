@@ -12,6 +12,11 @@
 - [Setup and Installation](#setup-and-installation)
 - [Running the Project](#running-the-project)
 - [Testing](#testing)
+- [Middleware Functionality](#middleware-functionality)
+- [Automation Testing Procedure](#automation-testing-procedure)
+- [FFmpeg-based Media Conversion](#ffmpeg-based-media-conversion)
+- [Streaming Service](#streaming-service)
+- [Cluster-Based Performance Optimization](#cluster-based-performance-optimization)
 - [Diagrams](#diagrams)
 
 ## Introduction
@@ -31,15 +36,35 @@ clinikk-tv-backend
 ├── routes
 │   ├── media.js
 │   └── user.js
+├── middleware
+│   └── authMiddleware.js
 ├── services
 │   ├── ffmpegService.js
 │   ├── streamService.js
 ├── utils
 │   ├── logger.js
 │   ├── cluster.js
+├── tests
+│   ├── user.test.js
+│   ├── media.test.js
 ├── app.js
 ├── config.js
+├── .env
 ```
+
+## Middleware Functionality
+
+### Authentication Middleware (authMiddleware.js)
+The authentication middleware is used to protect routes that require user authentication.
+
+- **Functionality:**
+  - Extracts the JWT token from the request headers.
+  - Verifies the token using the secret key.
+  - Attaches the decoded user information to the request object.
+  - If the token is missing or invalid, the request is denied with an appropriate response.
+
+- **Usage:**
+  - Applied to protected routes, such as media upload and streaming, to ensure only authenticated users can access them.
 
 ## Flow of Media API
 
@@ -66,6 +91,7 @@ The media API flow includes the following steps:
 - Users can stream media files by ID.
 - The media file is read and streamed in chunks to the client.
 
+
 ## Flow Diagrams
 
 Below are the flow diagrams representing different aspects of the Media API:
@@ -90,25 +116,32 @@ This diagram shows how media files are served in chunks to users, optimizing per
 
 ![Media Streaming](backend/content/requestStreaming.png)
 
-## Cluster-based Performance Optimization
+## Setup and Installation
 
-- **cluster.js** is used to utilize multiple CPU cores for efficient request handling.
-- The master process forks worker processes equal to the number of CPU cores.
-- If a worker crashes, the master automatically restarts it to maintain uptime.
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/your-repository/clinikk-tv-backend.git
+   cd clinikk-tv-backend
+   ```
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+3. Create a `.env` file in the root directory and add the following variables:
+   ```env
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret
+   ```
+   These values will be imported from `config.js`.
 
-## Logging System
-
-- **logger.js** uses Winston for logging important events such as:
-  - Server startup
-  - Worker process creation and failure
-  - API requests and errors
-- Logs are written to both the console and a `combined.log` file for debugging and auditing purposes.
-
-## Streaming Service
-
-- **streamService.js** handles media streaming by serving video content in chunks to optimize performance.
-- It processes `Range` headers to allow seeking and partial content delivery.
-- Uses `fs.createReadStream` for efficient media file handling.
+4. Start the server:
+   ```sh
+   npm start
+   ```
+   Or with nodemon for live reload:
+   ```sh
+   npm run dev
+   ```
 
 ## API Documentation
 
@@ -217,53 +250,44 @@ This diagram shows how media files are served in chunks to users, optimizing per
 }
 ```
 
-## Libraries Used
+## FFmpeg-based Media Conversion
 
-- **Express.js** - Web framework for Node.js
-- **Body-Parser** - Middleware to parse incoming request bodies
-- **Mongoose** - ODM for MongoDB
-- **Bcrypt.js** - Library for password hashing
-- **JSON Web Token (JWT)** - Authentication using token-based security
-- **Fluent-FFmpeg** & **@ffmpeg-installer/ffmpeg** - FFmpeg utilities for media processing
-- **Stream** - Node.js stream utilities
-- **Util** - Utility functions for handling asynchronous operations
-- **Cluster** - Enables multi-core processing for better performance
-- **Nodemon** - Development tool for automatic server restarts
-- **Winston** - Logging system for monitoring and debugging
+The media conversion service uses **FFmpeg** to convert uploaded video files into **HLS (HTTP Live Streaming) format** for adaptive bitrate streaming.
 
-## Setup and Installation
+- **Functionality:**
+  - Converts input video files into `.m3u8` HLS format.
+  - Splits the video into segments for optimized streaming.
+  - Ensures compatibility across different devices.
+  
+- **Implementation:**
+  - Uses `fluent-ffmpeg` to process media files.
+  - Stores processed media in a dedicated output directory.
 
-1. Create the project directory and initialize the project:
-   ```sh
-   mkdir clinikk-tv-backend
-   cd clinikk-tv-backend
-   npm init -y
-   ```
-2. Install dependencies:
-   ```sh
-   npm install express body-parser mongoose bcryptjs jsonwebtoken fluent-ffmpeg @ffmpeg-installer/ffmpeg stream util cluster nodemon winston
-   ```
-3. Set up the `.env` file with the following variables:
-   ```env
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret
-   ```
+## Streaming Service
 
-## Running the Project
+The streaming service handles the efficient delivery of media content to users.
 
-To start the server, run:
+- **Functionality:**
+  - Streams media files using chunked transfer encoding.
+  - Supports range-based streaming to allow seeking within videos.
+  - Ensures secure delivery with authentication checks.
+  
+- **Implementation:**
+  - Uses `fs` (File System) module to read and send media chunks.
+  - Implements `pipeline` from Node.js streams for optimized data transfer.
 
-```sh
-npm start
-```
+## Cluster-Based Performance Optimization
 
-Or with nodemon for live reload:
+The application is optimized using **Node.js clustering** to utilize multiple CPU cores for handling requests efficiently.
 
-```sh
-npm run dev
-```
-
-
+- **Functionality:**
+  - Distributes incoming requests across multiple worker processes.
+  - Automatically restarts failed workers for resilience.
+  - Enhances scalability and performance for concurrent users.
+  
+- **Implementation:**
+  - Uses `cluster` and `os` modules to spawn worker processes.
+  - Logs worker activity and automatically recovers from failures.
 
 ## Automation Testing Procedure
 
@@ -291,13 +315,14 @@ The test files are located in the `tests/` directory:
 - `user.test.js` for user-related tests.
 - `media.test.js` for media-related tests.
 
+## High-Level Design Diagram
+
+The following **High-Level Design (HLD) Diagram** illustrates the overall architecture of the Clinikk TV backend service:
+
+![High-Level Design Diagram](backend/content/HLD.png)
 
 
 ## Ownership
 
 This project is created by Deepanshu Chauhan
 deepanshuchauhan483@gmail.com
-
-
-
-
