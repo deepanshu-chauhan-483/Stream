@@ -263,12 +263,41 @@ Or with nodemon for live reload:
 npm run dev
 ```
 
-## Testing
 
-Follow these steps to test the API endpoints using Postman or Insomnia:
+
+## Automation Testing Procedure
+
+The project includes automated tests for User and Media APIs. These tests ensure that endpoints function correctly and validate the expected behavior.
+
+### Running Tests
+
+To execute the test suite, run the following command:
+```sh
+npm test
+```
+This command runs all test files under the `tests/` directory.
+
+### User API Tests
+- Tests user registration and login functionality.
+- Ensures successful token generation after login.
+- Verifies authentication mechanisms.
+
+### Media API Tests
+- Tests media upload, retrieval, and streaming.
+- Ensures media is correctly stored and processed.
+- Validates token authentication for media access.
+
+The test files are located in the `tests/` directory:
+- `user.test.js` for user-related tests.
+- `media.test.js` for media-related tests.
+
+
 
 ## Ownership
 
 This project is created by Deepanshu Chauhan
 deepanshuchauhan483@gmail.com
+
+
+
 
