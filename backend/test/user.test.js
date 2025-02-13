@@ -10,8 +10,8 @@ describe('User API Tests', () => {
         request(app)
             .post('/api/users/register')
             .send({
-                name: 'Test User 11',
-                email: 'test11@example.com',
+                name: 'Test User 12',
+                email: 'test12@example.com',
                 password: '123456'
             })
             .set('Content-Type', 'application/json')
