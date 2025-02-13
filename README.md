@@ -253,5 +253,8 @@ npm run dev
 
 Follow these steps to test the API endpoints using Postman or Insomnia:
 
-(Testing steps remain unchanged)
+## Ownership
+
+This project is created by Deepanshu Chauhan 
+deepanshuchauhan483@gmail.com
 
