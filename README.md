@@ -66,14 +66,15 @@ The media API flow includes the following steps:
 - Users can stream media files by ID.
 - The media file is read and streamed in chunks to the client.
 
-### Flow Diagrams:
+## Flow Diagrams
 
 Below are the flow diagrams representing different aspects of the Media API:
 
-![User Registration and Login](./Untitled%20diagram-2025-02-13-092517.png)
-![Media Upload](./Untitled%20diagram-2025-02-13-092609.png)
-![Fetching Media](./Untitled%20diagram-2025-02-13-092634.png)
-![Media Streaming](./Untitled%20diagram-2025-02-13-092711.png)
+![User Registration and Login](backend/content/Untitled-diagram-2025-02-13-092517.png)
+![Media Upload](backend/content/Untitled-diagram-2025-02-13-092609.png)
+![Fetching Media](backend/content/Untitled-diagram-2025-02-13-092634.png)
+![Media Streaming](backend/content/Untitled-diagram-2025-02-13-092711.png)
+
 
 ## Cluster-based Performance Optimization
 
