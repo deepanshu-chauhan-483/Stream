@@ -1,4 +1,4 @@
-# Clinikk TV Backend Service
+# Stream Backend Service (Submission for Clinikk)
 
 ## Table of Contents
 
