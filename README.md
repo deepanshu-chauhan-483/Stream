@@ -12,6 +12,7 @@
 - [Setup and Installation](#setup-and-installation)
 - [Running the Project](#running-the-project)
 - [Testing](#testing)
+- [Middleware Functionality](#middleware-functionality)
 - [Diagrams](#diagrams)
 
 ## Introduction
@@ -31,6 +32,8 @@ clinikk-tv-backend
 ├── routes
 │   ├── media.js
 │   └── user.js
+├── middleware
+│   └── authMiddleware.js
 ├── services
 │   ├── ffmpegService.js
 │   ├── streamService.js
@@ -39,6 +42,41 @@ clinikk-tv-backend
 │   ├── cluster.js
 ├── app.js
 ├── config.js
+```
+
+## Middleware Functionality
+
+### Authentication Middleware (authMiddleware.js)
+The authentication middleware is used to protect routes that require user authentication.
+
+- **Functionality:**
+  - Extracts the JWT token from the request headers.
+  - Verifies the token using the secret key.
+  - Attaches the decoded user information to the request object.
+  - If the token is missing or invalid, the request is denied with an appropriate response.
+
+- **Usage:**
+  - Applied to protected routes, such as media upload and streaming, to ensure only authenticated users can access them.
+
+```javascript
+const jwt = require('jsonwebtoken');
+const config = require('../config');
+
+const mediaMiddleware = (req, res, next) => {
+    const token = req.header('Authorization').split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ message: 'Access denied. No token provided.' });
+    }
+    try {
+        const decoded = jwt.verify(token, config.secretOrKey);
+        req.user = decoded;
+        next();
+    } catch (error) {
+        res.status(400).json({ message: 'Invalid token' });
+    }
+};
+
+module.exports = { mediaMiddleware };
 ```
 
 ## Flow of Media API
@@ -90,214 +128,8 @@ This diagram shows how media files are served in chunks to users, optimizing per
 
 ![Media Streaming](backend/content/requestStreaming.png)
 
-## Cluster-based Performance Optimization
-
-- **cluster.js** is used to utilize multiple CPU cores for efficient request handling.
-- The master process forks worker processes equal to the number of CPU cores.
-- If a worker crashes, the master automatically restarts it to maintain uptime.
-
-## Logging System
-
-- **logger.js** uses Winston for logging important events such as:
-  - Server startup
-  - Worker process creation and failure
-  - API requests and errors
-- Logs are written to both the console and a `combined.log` file for debugging and auditing purposes.
-
-## Streaming Service
-
-- **streamService.js** handles media streaming by serving video content in chunks to optimize performance.
-- It processes `Range` headers to allow seeking and partial content delivery.
-- Uses `fs.createReadStream` for efficient media file handling.
-
-## API Documentation
-
-### User Endpoints
-
-#### Register a New User
-
-**Endpoint:** `POST /api/users/register`
-
-**Request Body:**
-
-```json
-{
-    "name": "Test User",
-    "email": "test@example.com",
-    "password": "123456"
-}
-```
-
-**Headers:**
-
-```json
-{
-    "Content-Type": "application/json"
-}
-```
-
-#### Login a User
-
-**Endpoint:** `POST /api/users/login`
-
-**Request Body:**
-
-```json
-{
-    "email": "test@example.com",
-    "password": "123456"
-}
-```
-
-**Headers:**
-
-```json
-{
-    "Content-Type": "application/json"
-}
-```
-
-**Expected Response:**
-
-```json
-{
-    "token": "your_jwt_token_here"
-}
-```
-
-### Media Endpoints
-
-#### Get All Media
-
-**Endpoint:** `GET /api/media`
-
-**Headers:**
-
-```json
-{
-    "Content-Type": "application/json",
-    "Authorization": "Bearer your_jwt_token_here"
-}
-```
-
-#### Upload New Media
-
-**Endpoint:** `POST /api/media`
-
-**Request Body:**
-
-```json
-{
-    "title": "Test Media",
-    "description": "Description of Test Media",
-    "media_type": "video",
-    "file_path": "/path/to/file",
-    "uploaded_by": "Test User"
-}
-```
-
-**Headers:**
-
-```json
-{
-    "Content-Type": "application/json",
-    "Authorization": "Bearer your_jwt_token_here"
-}
-```
-
-#### Stream Media by ID
-
-**Endpoint:** `GET /api/media/stream/:id`
-
-**Headers:**
-
-```json
-{
-    "Authorization": "Bearer your_jwt_token_here"
-}
-```
-
-## Libraries Used
-
-- **Express.js** - Web framework for Node.js
-- **Body-Parser** - Middleware to parse incoming request bodies
-- **Mongoose** - ODM for MongoDB
-- **Bcrypt.js** - Library for password hashing
-- **JSON Web Token (JWT)** - Authentication using token-based security
-- **Fluent-FFmpeg** & **@ffmpeg-installer/ffmpeg** - FFmpeg utilities for media processing
-- **Stream** - Node.js stream utilities
-- **Util** - Utility functions for handling asynchronous operations
-- **Cluster** - Enables multi-core processing for better performance
-- **Nodemon** - Development tool for automatic server restarts
-- **Winston** - Logging system for monitoring and debugging
-
-## Setup and Installation
-
-1. Create the project directory and initialize the project:
-   ```sh
-   mkdir clinikk-tv-backend
-   cd clinikk-tv-backend
-   npm init -y
-   ```
-2. Install dependencies:
-   ```sh
-   npm install express body-parser mongoose bcryptjs jsonwebtoken fluent-ffmpeg @ffmpeg-installer/ffmpeg stream util cluster nodemon winston
-   ```
-3. Set up the `.env` file with the following variables:
-   ```env
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret
-   ```
-
-## Running the Project
-
-To start the server, run:
-
-```sh
-npm start
-```
-
-Or with nodemon for live reload:
-
-```sh
-npm run dev
-```
-
-
-
-## Automation Testing Procedure
-
-The project includes automated tests for User and Media APIs. These tests ensure that endpoints function correctly and validate the expected behavior.
-
-### Running Tests
-
-To execute the test suite, run the following command:
-```sh
-npm test
-```
-This command runs all test files under the `tests/` directory.
-
-### User API Tests
-- Tests user registration and login functionality.
-- Ensures successful token generation after login.
-- Verifies authentication mechanisms.
-
-### Media API Tests
-- Tests media upload, retrieval, and streaming.
-- Ensures media is correctly stored and processed.
-- Validates token authentication for media access.
-
-The test files are located in the `tests/` directory:
-- `user.test.js` for user-related tests.
-- `media.test.js` for media-related tests.
-
-
-
 ## Ownership
 
 This project is created by Deepanshu Chauhan
 deepanshuchauhan483@gmail.com
-
-
-
 
