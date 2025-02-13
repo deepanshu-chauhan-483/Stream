@@ -198,6 +198,58 @@ This diagram shows how media files are served in chunks to users, optimizing per
 }
 ```
 
+### Media Endpoints
+
+#### Get All Media
+
+**Endpoint:** `GET /api/media`
+
+**Headers:**
+
+```json
+{
+    "Content-Type": "application/json",
+    "Authorization": "Bearer your_jwt_token_here"
+}
+```
+
+#### Upload New Media
+
+**Endpoint:** `POST /api/media`
+
+**Request Body:**
+
+```json
+{
+    "title": "Test Media",
+    "description": "Description of Test Media",
+    "media_type": "video",
+    "file_path": "/path/to/file",
+    "uploaded_by": "Test User"
+}
+```
+
+**Headers:**
+
+```json
+{
+    "Content-Type": "application/json",
+    "Authorization": "Bearer your_jwt_token_here"
+}
+```
+
+#### Stream Media by ID
+
+**Endpoint:** `GET /api/media/stream/:id`
+
+**Headers:**
+
+```json
+{
+    "Authorization": "Bearer your_jwt_token_here"
+}
+```
+
 ## FFmpeg-based Media Conversion
 
 The media conversion service uses **FFmpeg** to convert uploaded video files into **HLS (HTTP Live Streaming) format** for adaptive bitrate streaming.
