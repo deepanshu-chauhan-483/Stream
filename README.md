@@ -70,11 +70,25 @@ The media API flow includes the following steps:
 
 Below are the flow diagrams representing different aspects of the Media API:
 
-![User Registration and Login](backend/content/Untitled-diagram-2025-02-13-092517.png)
-![Media Upload](backend/content/Untitled-diagram-2025-02-13-092609.png)
-![Fetching Media](backend/content/Untitled-diagram-2025-02-13-092634.png)
-![Media Streaming](backend/content/Untitled-diagram-2025-02-13-092711.png)
+### User Registration and Login
+This diagram illustrates the process of user authentication, including registration and login, where users receive a JWT token upon successful authentication.
 
+![User Registration and Login](backend/content/authentication.png)
+
+### Media Upload
+This diagram details the steps involved in uploading media files, processing them with FFmpeg, and storing their metadata in the database.
+
+![Media Upload](backend/content/media_upload.png)
+
+### Fetching Media
+This diagram represents how media details are retrieved from the database and returned to the client upon request.
+
+![Fetching Media](backend/content/getMedia.png)
+
+### Media Streaming
+This diagram shows how media files are served in chunks to users, optimizing performance and ensuring smooth playback.
+
+![Media Streaming](backend/content/requestStreaming.png)
 
 ## Cluster-based Performance Optimization
 
@@ -253,5 +267,8 @@ npm run dev
 
 Follow these steps to test the API endpoints using Postman or Insomnia:
 
-(Testing steps remain unchanged)
+## Ownership
+
+This project is created by Deepanshu Chauhan
+deepanshuchauhan483@gmail.com
 
