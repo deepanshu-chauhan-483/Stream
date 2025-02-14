@@ -17,7 +17,7 @@
 - [FFmpeg-based Media Conversion](#ffmpeg-based-media-conversion)
 - [Streaming Service](#streaming-service)
 - [Cluster-Based Performance Optimization](#cluster-based-performance-optimization)
-- [Diagrams](#diagrams)
+- [High Level Design Diagram](#high-level-design-diagram)
 
 ## Introduction
 
