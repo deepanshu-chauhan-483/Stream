@@ -120,8 +120,8 @@ This diagram shows how media files are served in chunks to users, optimizing per
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/your-repository/clinikk-tv-backend.git
-   cd clinikk-tv-backend
+   git clone https://github.com/deepanshu-chauhan-483/Stream
+   cd Stream
    ```
 2. Install dependencies:
    ```sh
